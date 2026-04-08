@@ -1,0 +1,65 @@
+<audio id="birthdaySong" loop>
+    <source src="song.mp3?v=1" type="audio/mpeg">
+</audio>
+
+<script>
+    function celebrate() {
+        const audio = document.getElementById('birthdaySong');
+        
+        // 1. Force the song to reload to bypass cache
+        audio.load(); 
+        audio.play().catch(e => console.log("Audio play blocked or file missing"));
+
+        // 2. Show the content IMMEDIATELY
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('mainPage').style.display = 'flex';
+
+        // 3. Load Photos safely
+        const gallery = document.getElementById('photoGallery');
+        gallery.innerHTML = ''; // Clear gallery before loading
+        
+        for (let i = 1; i <= 15; i++) {
+            const img = document.createElement('img');
+            // Adding a random query string helps bypass GitHub cache
+            img.src = i + '.jpg?v=' + Math.random(); 
+            img.loading = "lazy";
+            img.onerror = function() { 
+                this.src = 'https://via.placeholder.com/200x250/ff4d88/ffffff?text=Baby+Furqan'; 
+            };
+            gallery.appendChild(img);
+        }
+    }
+
+    // Particle Background (kept your original logic)
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    function init() {
+        canvas.width = window.innerWidth; 
+        canvas.height = window.innerHeight;
+        particles = []; 
+        for(let i=0; i<100; i++) {
+            particles.push({
+                x: Math.random() * canvas.width, 
+                y: Math.random() * canvas.height, 
+                s: Math.random() * 2, 
+                sp: Math.random() * 0.5 + 0.2 // Slightly faster
+            });
+        }
+    }
+    function animate() {
+        ctx.clearRect(0,0,canvas.width,canvas.height); 
+        ctx.fillStyle="rgba(255, 255, 255, 0.8)";
+        particles.forEach(p => { 
+            ctx.beginPath(); 
+            ctx.arc(p.x, p.y, p.s, 0, Math.PI*2); 
+            ctx.fill(); 
+            p.y -= p.sp; 
+            if(p.y < 0) p.y = canvas.height; 
+        });
+        requestAnimationFrame(animate);
+    }
+    window.addEventListener('resize', init); 
+    init(); 
+    animate();
+</script>
